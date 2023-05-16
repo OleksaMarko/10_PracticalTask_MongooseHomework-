@@ -17,12 +17,13 @@ const userSchema = new mongoose.Schema(
       maxlength: 60,
       trim: true,
     },
-    fullName: {
-      type: String,
-      set: function () {
-        return `${this.firstName} ${this.lastName}`;
-      },
-    },
+    fullName: String,
+    // fullName: {
+    //   type: String,
+    //   set: function () {
+    //     return `${this.firstName} ${this.lastName}`;
+    //   },
+    // },
     email: {
       type: String,
       required: true,
@@ -43,8 +44,8 @@ const userSchema = new mongoose.Schema(
       type: Number,
       min: 1,
       max: 99,
-      set: function (v) {
-        return v < 0 ? 1 : v;
+      set: function (num) {
+        return num < 0 ? 1 : num;
       },
     },
     numberOfArticles: {
@@ -62,6 +63,11 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre("save", function (next) {
+  this.fullName = `${this.firstName} ${this.lastName}`;
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
